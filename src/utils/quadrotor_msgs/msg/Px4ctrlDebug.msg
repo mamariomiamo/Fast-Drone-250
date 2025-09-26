@@ -1,4 +1,17 @@
 Header header
+float64 traj_sp_p_x
+float64 traj_sp_p_y
+float64 traj_sp_p_z
+float64 traj_sp_v_x
+float64 traj_sp_v_y
+float64 traj_sp_v_z
+float64 traj_sp_a_x
+float64 traj_sp_a_y
+float64 traj_sp_a_z
+float64 traj_sp_j_x
+float64 traj_sp_j_y
+float64 traj_sp_j_z
+
 
 float64 des_v_x
 float64 des_v_y

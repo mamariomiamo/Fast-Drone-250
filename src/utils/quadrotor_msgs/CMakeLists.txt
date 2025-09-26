@@ -55,7 +55,7 @@ catkin_package(
   LIBRARIES encode_msgs decode_msgs
   #CATKIN_DEPENDS geometry_msgs nav_msgs
   #DEPENDS system_lib
-  CATKIN_DEPENDS message_runtime
+  CATKIN_DEPENDS message_runtime geometry_msgs nav_msgs
 )
 
 # add_executable(test_exe src/test_exe.cpp)

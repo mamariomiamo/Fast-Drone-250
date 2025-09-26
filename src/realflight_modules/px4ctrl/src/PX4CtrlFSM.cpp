@@ -8,15 +8,16 @@ PX4CtrlFSM::PX4CtrlFSM(Parameter_t &param_, LinearControl &controller_) : param(
 {
 	state = MANUAL_CTRL;
 	hover_pose.setZero();
+	no_rc = false;
 }
 
-/* 
-        Finite State Machine
+/*
+		Finite State Machine
 
-	      system start
-	            |
-	            |
-	            v
+		  system start
+				|
+				|
+				v
 	----- > MANUAL_CTRL <-----------------
 	|         ^   |    \                 |
 	|         |   |     \                |
@@ -48,7 +49,7 @@ void PX4CtrlFSM::process()
 	{
 	case MANUAL_CTRL:
 	{
-		if (rc_data.enter_hover_mode) // Try to jump to AUTO_HOVER
+		if (rc_data.enter_hover_mode || user_cmd_data.state == PX4CtrlFSM::State_t::AUTO_HOVER) // Try to jump to AUTO_HOVER
 		{
 			if (!odom_is_received(now_time))
 			{
@@ -154,7 +155,7 @@ void PX4CtrlFSM::process()
 
 			ROS_WARN("[px4ctrl] AUTO_HOVER(L2) --> MANUAL_CTRL(L1)");
 		}
-		else if (rc_data.is_command_mode && cmd_is_received(now_time))
+		else if ((rc_data.is_command_mode || user_cmd_data.state == static_cast<uint16_t>(PX4CtrlFSM::State_t::CMD_CTRL)) && cmd_is_received(now_time))
 		{
 			if (state_data.current_state.mode == "OFFBOARD")
 			{
@@ -303,8 +304,7 @@ void PX4CtrlFSM::process()
 	if (state == AUTO_HOVER || state == CMD_CTRL)
 	{
 		// controller.estimateThrustModel(imu_data.a, bat_data.volt, param);
-		controller.estimateThrustModel(imu_data.a,param);
-
+		controller.estimateThrustModel(imu_data.a, param);
 	}
 
 	// STEP3: solve and update new control commands
@@ -384,7 +384,7 @@ void PX4CtrlFSM::land_detector(const State_t state, const Desired_State_t &des, 
 		}
 		else if (C12_satisfy && is_last_C12_satisfy)
 		{
-			if ((ros::Time::now() - time_C12_reached).toSec() > TIME_KEEP_C) //Constraint 3 reached
+			if ((ros::Time::now() - time_C12_reached).toSec() > TIME_KEEP_C) // Constraint 3 reached
 			{
 				takeoff_land.landed = true;
 			}

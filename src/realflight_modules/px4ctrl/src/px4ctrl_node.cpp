@@ -55,11 +55,16 @@ int main(int argc, char *argv[])
                                        ros::TransportHints().tcpNoDelay());
 
     ros::Subscriber rc_sub;
+    ros::Subscriber user_cmd_sub;
     if (!param.takeoff_land.no_RC) // mavros will still publish wrong rc messages although no RC is connected
     {
         rc_sub = nh.subscribe<mavros_msgs::RCIn>("/mavros/rc/in",
                                                  10,
                                                  boost::bind(&RC_Data_t::feed, &fsm.rc_data, _1));
+    }
+    else
+    {
+        user_cmd_sub = nh.subscribe<std_msgs::UInt16>("/user_cmd", 10, boost::bind(&User_Command_Data_t::feed, &fsm.user_cmd_data, _1));
     }
 
     ros::Subscriber bat_sub =
@@ -90,9 +95,11 @@ int main(int argc, char *argv[])
     if (param.takeoff_land.no_RC)
     {
         ROS_WARN("PX4CTRL] Remote controller disabled, be careful!");
+        fsm.no_rc = true;
     }
     else
     {
+        fsm.no_rc = false;
         ROS_INFO("PX4CTRL] Waiting for RC");
         while (ros::ok())
         {

@@ -1,5 +1,16 @@
 #include "input.h"
 
+User_Command_Data_t::User_Command_Data_t()
+{
+    state = 1;
+}
+
+void User_Command_Data_t::feed(std_msgs::UInt16ConstPtr pMsg)
+{
+    msg = *pMsg;
+    state = msg.data;
+}
+
 RC_Data_t::RC_Data_t()
 {
     rcv_stamp = ros::Time(0);
@@ -147,16 +158,16 @@ void Odom_Data_t::feed(nav_msgs::OdometryConstPtr pMsg)
     // check the frequency
     static int one_min_count = 9999;
     static ros::Time last_clear_count_time = ros::Time(0.0);
-    if ( (now - last_clear_count_time).toSec() > 1.0 )
+    if ((now - last_clear_count_time).toSec() > 1.0)
     {
-        if ( one_min_count < 100 )
+        if (one_min_count < 100)
         {
             ROS_WARN("ODOM frequency seems lower than 100Hz, which is too low!");
         }
         one_min_count = 0;
         last_clear_count_time = now;
     }
-    one_min_count ++;
+    one_min_count++;
 }
 
 Imu_Data_t::Imu_Data_t()
@@ -187,16 +198,16 @@ void Imu_Data_t::feed(sensor_msgs::ImuConstPtr pMsg)
     // check the frequency
     static int one_min_count = 9999;
     static ros::Time last_clear_count_time = ros::Time(0.0);
-    if ( (now - last_clear_count_time).toSec() > 1.0 )
+    if ((now - last_clear_count_time).toSec() > 1.0)
     {
-        if ( one_min_count < 100 )
+        if (one_min_count < 100)
         {
             ROS_WARN("IMU frequency seems lower than 100Hz, which is too low!");
         }
         one_min_count = 0;
         last_clear_count_time = now;
     }
-    one_min_count ++;
+    one_min_count++;
 }
 
 State_Data_t::State_Data_t()
