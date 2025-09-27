@@ -34,11 +34,11 @@ generate_messages(
 )
 
 catkin_package(
- INCLUDE_DIRS include
- LIBRARIES traj_utils 
- CATKIN_DEPENDS message_runtime
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES traj_utils
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs message_runtime
 )
+
 
 include_directories( 
     SYSTEM 
@@ -57,3 +57,4 @@ add_library( traj_utils
 target_link_libraries( traj_utils
     ${catkin_LIBRARIES} 
     )  
+add_dependencies(traj_utils ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

@@ -11,8 +11,18 @@
 #include <mavros_msgs/State.h>
 #include <mavros_msgs/ExtendedState.h>
 #include <sensor_msgs/BatteryState.h>
+#include <std_msgs/UInt16.h>
 #include <uav_utils/utils.h>
 #include "PX4CtrlParam.h"
+
+class User_Command_Data_t
+{
+public:
+  std_msgs::UInt16 msg;
+  uint16_t state;
+  User_Command_Data_t();
+  void feed(std_msgs::UInt16ConstPtr pMsg);
+};
 
 class RC_Data_t
 {

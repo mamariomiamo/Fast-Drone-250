@@ -20,7 +20,7 @@ struct AutoTakeoffLand_t
 	ros::Time toggle_takeoff_land_time;
 	std::pair<bool, ros::Time> delay_trigger{std::pair<bool, ros::Time>(false, ros::Time(0))};
 	Eigen::Vector4d start_pose;
-	
+
 	static constexpr double MOTORS_SPEEDUP_TIME = 3.0; // motors idle running for 3 seconds before takeoff
 	static constexpr double DELAY_TRIGGER_TIME = 2.0;  // Time to be delayed when reach at target height
 };
@@ -31,6 +31,7 @@ public:
 	Parameter_t &param;
 
 	RC_Data_t rc_data;
+	User_Command_Data_t user_cmd_data;
 	State_Data_t state_data;
 	ExtendedState_Data_t extended_state_data;
 	Odom_Data_t odom_data;
@@ -43,21 +44,23 @@ public:
 
 	ros::Publisher traj_start_trigger_pub;
 	ros::Publisher ctrl_FCU_pub;
-	ros::Publisher debug_pub; //debug
+	ros::Publisher debug_pub; // debug
 	ros::ServiceClient set_FCU_mode_srv;
 	ros::ServiceClient arming_client_srv;
 	ros::ServiceClient reboot_FCU_srv;
 
-	quadrotor_msgs::Px4ctrlDebug debug_msg; //debug
+	quadrotor_msgs::Px4ctrlDebug debug_msg; // debug
 
 	Eigen::Vector4d hover_pose;
 	ros::Time last_set_hover_pose_time;
 
+	bool no_rc;
+
 	enum State_t
 	{
 		MANUAL_CTRL = 1, // px4ctrl is deactived. FCU is controled by the remote controller only
-		AUTO_HOVER, // px4ctrl is actived, it will keep the drone hover from odom measurments while waiting for commands from PositionCommand topic.
-		CMD_CTRL,	// px4ctrl is actived, and controling the drone.
+		AUTO_HOVER,		 // px4ctrl is actived, it will keep the drone hover from odom measurments while waiting for commands from PositionCommand topic.
+		CMD_CTRL,		 // px4ctrl is actived, and controling the drone.
 		AUTO_TAKEOFF,
 		AUTO_LAND
 	};
@@ -83,7 +86,7 @@ private:
 
 	// ---- auto takeoff/land ----
 	void motors_idling(const Imu_Data_t &imu, Controller_Output_t &u);
-	void land_detector(const State_t state, const Desired_State_t &des, const Odom_Data_t &odom); // Detect landing 
+	void land_detector(const State_t state, const Desired_State_t &des, const Odom_Data_t &odom); // Detect landing
 	void set_start_pose_for_takeoff_land(const Odom_Data_t &odom);
 	Desired_State_t get_rotor_speed_up_des(const ros::Time now);
 	Desired_State_t get_takeoff_land_des(const double speed);
@@ -93,7 +96,7 @@ private:
 	void set_hov_with_rc();
 
 	bool toggle_offboard_mode(bool on_off); // It will only try to toggle once, so not blocked.
-	bool toggle_arm_disarm(bool arm); // It will only try to toggle once, so not blocked.
+	bool toggle_arm_disarm(bool arm);		// It will only try to toggle once, so not blocked.
 	void reboot_FCU();
 
 	void publish_bodyrate_ctrl(const Controller_Output_t &u, const ros::Time &stamp);

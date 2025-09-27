@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   uav_utils
   mavros
+  std_msgs
 )
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -45,5 +46,6 @@ target_link_libraries(px4ctrl_node
 )
 
 catkin_install_python(PROGRAMS thrust_calibrate_scrips/thrust_calibrate.py
+  script/enu_to_nwu_odom.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
